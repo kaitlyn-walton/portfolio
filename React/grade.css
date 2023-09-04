@@ -1,0 +1,15 @@
+.grades-input-row {
+    height: 70px;
+}
+
+.grades-header-row {
+    height: 30px;
+}
+
+.add-remove-submit-column {
+    width: 15%;
+}
+
+.grades-dropdown-column {
+    width: 25%;
+}

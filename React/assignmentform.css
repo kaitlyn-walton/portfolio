@@ -1,0 +1,26 @@
+.site-theme-purple {
+    color: #fff;
+    background-color: #754ffe;
+    border-color: #754ffe;
+}
+
+.assignment-table-input-row {
+    height: 70px;
+}
+
+.assignment-table-header-row {
+    height: 30px;
+}
+
+.assignment-table-team-images {
+    height: auto;
+ 
+}
+
+.field-position-table-column {
+    width: 30%;
+}
+
+/* .assignment-form-control:focus {
+    border-color: "primary";
+} */

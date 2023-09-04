@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Sabio.Models.Requests.Assignments
+{
+    public class AssignmentPositionAddRequest
+    {
+        [Required]
+        [Range(1, Int32.MaxValue)]
+        public int GameId { get; set; }
+        [Required]
+        [Range(1, Int32.MaxValue)]
+        public int AssignmentTypeId { get; set; }
+        [Required]
+        public List<OfficialPositionAddRequest> OfficialData { get; set; }
+        [Required]
+        public decimal Fee { get; set; }               
+    }
+
+    public class OfficialPositionAddRequest
+    {
+        [Required]
+        [Range(1, Int32.MaxValue)]
+        public int PositionId { get; set; }
+        [Required]
+        [Range(1, Int32.MaxValue)]
+        public int UserId { get; set; }
+        [Required]
+        [Range(1, Int32.MaxValue)]
+        public int AssignmentStatusId { get; set; }
+    }
+}

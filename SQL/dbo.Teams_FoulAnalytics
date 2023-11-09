@@ -1,0 +1,49 @@
+﻿USE [AssignRef]
+GO
+/****** Object:  StoredProcedure [dbo].[Teams_FoulAnalytics]    Script Date: 4/26/2023 6:49:10 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Author:		Kaitlyn Walton
+-- Create date: 4/24/2023
+-- Description:	calculates the number/percentage of fouls and for the visiting and home teams
+--				based on the game selected
+-- Code Reviewer:
+
+-- MODIFIED BY: 
+-- MODIFIED DATE:
+-- Code Reviewer:
+-- Note:
+-- =============================================
+
+CREATE proc [dbo].[Teams_FoulAnalytics]		
+				@GameId int
+
+as
+/*
+	declare @GameId int = 18
+	execute dbo.Teams_FoulAnalytics @GameId
+*/
+BEGIN
+
+	DECLARE @HomeTeamFouls int = (
+									SELECT	COUNT (f.Id) 
+									FROM	dbo.Fouls as f join dbo.Games as g
+												on g.HomeTeamId = f.TeamId
+									WHERE	g.HomeTeamId = f.TeamId AND g.Id = @GameId) 
+
+	DECLARE @VisitingTeamFouls int =(
+									SELECT	COUNT (f.Id) 
+									FROM	dbo.Fouls as f join dbo.Games as g
+												on g.VisitingTeamId = f.TeamId
+									WHERE	g.VisitingTeamId = f.TeamId AND g.Id = @GameId)
+
+	SELECT	@HomeTeamFouls as HomeTeam,			
+			ROUND(100.0 * @HomeTeamFouls/ SUM(@HomeTeamFouls + @VisitingTeamFouls), 1) as HomeTeamPercentage,
+			@VisitingTeamFouls as VisitingTeam,
+			ROUND(100.0 * @VisitingTeamFouls/ SUM(@HomeTeamFouls + @VisitingTeamFouls), 1) as VisitingTeamPercentage
+			
+END
+GO

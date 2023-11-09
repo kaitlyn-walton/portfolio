@@ -1,0 +1,67 @@
+﻿USE [AssignRef]
+GO
+/****** Object:  StoredProcedure [dbo].[FieldPositions_SelectByCrewNeeded]    Script Date: 5/12/2023 5:36:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Kaitlyn Walton
+-- Create date: 5/13/2023
+-- Description: Select field positions by number of crew needed
+--			    
+-- Code Reviewer: Chris Cheng
+
+-- MODIFIED BY: 
+-- MODIFIED DATE:
+-- Code Reviewer:
+-- Note:
+--
+-- =============================================
+
+
+CREATE proc [dbo].[FieldPositions_SelectByCrewNeeded]
+					@CrewNumber int
+					,@ReplayOfficials nvarchar(10) 
+					,@AlternateOfficial nvarchar(10)
+as
+/*
+	DECLARE @CrewNumber int = 8
+			,@ReplayOfficials int = 10
+			,@AlternateOfficial int = 11
+	EXECUTE dbo.FieldPositions_SelectByCrewNeeded 
+								@CrewNumber
+								,@ReplayOfficials
+								,@AlternateOfficial
+*/
+BEGIN 
+	If @CrewNumber <= 8
+	SELECT	[Id]
+			,[Name]
+			,[Code]
+	FROM	[dbo].[FieldPositions]
+	WHERE	Id = ANY 
+					(SELECT	Id
+					 FROM	dbo.FieldPositions
+					 WHERE	Id <= @CrewNumber)
+	IF @ReplayOfficials = 'true'
+		SELECT	[Id]
+				,[Name]
+				,[Code]
+		FROM	[dbo].[FieldPositions]
+		WHERE	Id in (9,10)
+	IF @AlternateOfficial = 'true'
+		SELECT	[Id]
+				,[Name]
+				,[Code]
+		FROM	[dbo].[FieldPositions]
+		WHERE	Id = 
+						(SELECT	Id
+						 FROM	dbo.FieldPositions
+						 WHERE	Id = 11)
+
+END
+
+
+GO

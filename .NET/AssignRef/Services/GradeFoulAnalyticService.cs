@@ -1,22 +1,4 @@
-﻿using Sabio.Data;
-using Sabio.Data.Providers;
-using Sabio.Models.Domain;
-using Sabio.Models.Domain.Fouls;
-using Sabio.Models.Domain.Grades;
-using Sabio.Models.Domain.Seasons;
-using Sabio.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
-namespace Sabio.Services
-{
     public class GradeFoulAnalyticService : IGradeFoulAnalyticService
     {
         IDataProvider _data = null;
@@ -250,5 +232,3 @@ namespace Sabio.Services
         }
 
     }
-
-}

@@ -1,24 +1,3 @@
-﻿using Sabio.Data.Providers;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Sabio.Models.Domain.Seasons;
-using Sabio.Data;
-using Sabio.Models.Requests.Seasons;
-using System.Reflection.PortableExecutable;
-using System.Reflection;
-using Sabio.Web.Core.Services;
-using Sabio.Models.Domain.Conferences;
-using Sabio.Services.Interfaces;
-using Sabio.Models.Domain.Crews;
-
-namespace Sabio.Services
-{
-    
     public class SeasonService : ISeasonService
     {
 
@@ -163,4 +142,3 @@ namespace Sabio.Services
             col.AddWithValue("@Weeks", model.Weeks);
         }
     }
-}

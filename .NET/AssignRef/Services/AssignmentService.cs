@@ -1,19 +1,4 @@
-﻿using Sabio.Data.Providers;
-using Sabio.Models.Domain;
-using Sabio.Models.Requests.Assignments;
-using System;
-using System.Data;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Sabio.Data;
-using Sabio.Services.Interfaces;
-using Stripe.Terminal;
 
-namespace Sabio.Services
-{
     public class AssignmentService : IAssignmentService
     {
         IDataProvider _data = null;
@@ -163,4 +148,3 @@ namespace Sabio.Services
             return assignment;
         }
     }
-}

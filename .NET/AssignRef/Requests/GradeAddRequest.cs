@@ -1,13 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sabio.Models.Requests.Grades
-{
     public class GradeAddRequest
     {
         [Required]
@@ -20,4 +10,3 @@ namespace Sabio.Models.Requests.Grades
         [StringLength(1000)]
         public string Comment { get; set; }
     }
-}

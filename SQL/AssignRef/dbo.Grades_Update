@@ -18,12 +18,12 @@ as
 			,@StatusId int = 
 
 	execute dbo.Grades_Update
-					@FoulId
-					,@GradeTypeId
-					,@Comment
-					,@ModifiedBy
-					,@StatusId
-					,@Id
+				@FoulId
+				,@GradeTypeId
+				,@Comment
+				,@ModifiedBy
+				,@StatusId
+				,@Id
 
 */
 BEGIN

@@ -1,12 +1,3 @@
-﻿using Sabio.Models;
-using Sabio.Models.Domain;
-using Sabio.Models.Domain.Grades;
-using Sabio.Models.Requests.Grades;
-using System.Collections.Generic;
-using static Sabio.Services.GradeService;
-
-namespace Sabio.Services.Interfaces
-{
     public interface IGradeService
     {
         int AddGrade(GradeAddRequest model, int userId);
@@ -20,4 +11,3 @@ namespace Sabio.Services.Interfaces
         void BatchUpdateGrades(List<GradeUpdateRequest> model, int userId);
         List<GradeType> GetAllGradeTypes(string isReplay);
     }
-}

@@ -8,8 +8,8 @@ as
 			@Id int = 
 
 	execute dbo.Grades_Delete 
-						@ModifiedBy
-						,@Id
+			@ModifiedBy
+			,@Id
 
 -----StatusId 2 = 'Inactive' 
 */

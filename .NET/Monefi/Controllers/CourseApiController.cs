@@ -1,21 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Sabio.Services;
-using Sabio.Services.Interfaces;
-using Sabio.Web.Controllers;
-using Sabio.Web.Models.Responses;
-using System.Data.SqlClient;
-using System;
-using Sabio.Models;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Sabio.Models.Domain;
-using Sabio.Models.Requests;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
 
-namespace Sabio.Web.Api.Controllers
-{
     [Route("api/courses")]
     [ApiController]
     public class CourseApiController : BaseApiController
@@ -365,6 +348,4 @@ namespace Sabio.Web.Api.Controllers
 
         }
 
-
     }
-}

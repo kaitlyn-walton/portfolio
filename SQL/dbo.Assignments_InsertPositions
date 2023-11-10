@@ -1,24 +1,3 @@
-﻿USE [AssignRef]
-GO
-/****** Object:  StoredProcedure [dbo].[Assignments_InsertPositions]    Script Date: 5/12/2023 5:36:23 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Kaitlyn Walton
--- Create date: 5/12/2023
--- Description: Assignments with BatchInsert of Official Positions
---			    
--- Code Reviewer: Chris Cheng
-
--- MODIFIED BY: 
--- MODIFIED DATE:
--- Code Reviewer:
--- Note:
---
--- =============================================
 
 CREATE proc [dbo].[Assignments_InsertPositions]
 				@GameId int,

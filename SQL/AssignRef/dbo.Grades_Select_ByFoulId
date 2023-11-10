@@ -1,8 +1,8 @@
 
 CREATE proc [dbo].[Grades_Select_ByFoulId]
-						@PageIndex int
-						,@PageSize int
-						,@FoulId int
+				@PageIndex int
+				,@PageSize int
+				,@FoulId int
 
 as
 /*
@@ -11,9 +11,9 @@ as
 			,@FoulId int = 5
 
 	execute [dbo].[Grades_Select_ByFoulId] 
-									@PageIndex
-									,@PageSize
-									,@FoulId
+					@PageIndex
+					,@PageSize
+					,@FoulId
 
 */
 BEGIN

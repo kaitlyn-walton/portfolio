@@ -20,7 +20,7 @@ BEGIN
 	declare @dateNow datetime2(7) = getutcdate()
 
 	Update [dbo].[Grades]
-		Set [FoulId] = b.[FoulId]
+	Set [FoulId] = 	b.[FoulId]
 			,[GradeTypeId] = b.[GradeTypeId]
 			,[Comment] = b.[Comment]
 			,[ModifiedBy] = @ModifiedBy

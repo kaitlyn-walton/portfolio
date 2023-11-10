@@ -1,0 +1,22 @@
+CREATE PROC	[dbo].[CourseSubscribers_Select] 
+		@CourseId int
+
+AS
+/*
+	DECLARE @CourseId int = 6
+
+	EXECUTE [dbo].[CourseSubscribers_Select] @CourseId
+*/
+BEGIN
+
+	SELECT	u.Id AS UserId
+			,u.FirstName
+			,u.LastName
+			,u.Mi
+			,u.AvatarUrl
+
+	FROM [dbo].[Users] AS u JOIN [dbo].[CourseSubscription] AS cs
+			ON u.Id = cs.UserId
+	WHERE cs.CourseId = @CourseId
+
+END 

@@ -40,6 +40,3 @@ BEGIN
 						 WHERE	Id = 11)
 
 END
-
-
-GO

@@ -1,0 +1,32 @@
+CREATE PROC [dbo].[CourseSubscribers_SelectAll]
+
+AS
+/*
+
+	Execute [dbo].[CourseSubscribers_SelectAll] 
+
+*/
+BEGIN
+
+	SELECT DISTINCT	u.Id
+					,u.FirstName
+					,u.LastName
+					,u.Mi
+					,u.AvatarUrl
+					,CourseIds = STUFF((SELECT ', ' + CAST(CourseId as nvarchar(100))
+								FROM dbo.CourseSubscription a 
+								WHERE a.UserId = b.UserId
+								ORDER BY CourseId ASC
+								FOR XML PATH('')), 1, 2, '')
+					,CourseNames = STUFF((Select ', ' + c.Title
+									FROM dbo.Courses as c join dbo.CourseSubscription as cs
+											ON c.Id = cs.CourseId
+									WHERE c.Id = cs.CourseId AND cs.UserId = b.UserId
+									ORDER BY cs.CourseId ASC
+									FOR XML PATH('')), 1, 2, '')
+							
+	FROM dbo.CourseSubscription b join dbo.Users as u
+			ON u.Id = b.UserId
+	WHERE u.Id = b.UserId
+
+END

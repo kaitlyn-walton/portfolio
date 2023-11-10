@@ -12,9 +12,8 @@ as
 	values (), ()
 
 	execute [dbo].[Grades_BatchUpdate] 
-								@BatchUpdateGrades
-								,@ModifiedBy
-
+				@BatchUpdateGrades
+				,@ModifiedBy
 */
 BEGIN
 

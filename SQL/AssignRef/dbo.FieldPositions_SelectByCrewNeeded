@@ -1,17 +1,17 @@
 
 CREATE proc [dbo].[FieldPositions_SelectByCrewNeeded]
-					@CrewNumber int
-					,@ReplayOfficials nvarchar(10) 
-					,@AlternateOfficial nvarchar(10)
+			@CrewNumber int
+			,@ReplayOfficials nvarchar(10) 
+			,@AlternateOfficial nvarchar(10)
 as
 /*
 	DECLARE @CrewNumber int = 8
 			,@ReplayOfficials int = 10
 			,@AlternateOfficial int = 11
 	EXECUTE dbo.FieldPositions_SelectByCrewNeeded 
-								@CrewNumber
-								,@ReplayOfficials
-								,@AlternateOfficial
+					@CrewNumber
+					,@ReplayOfficials
+					,@AlternateOfficial
 */
 BEGIN 
 	If @CrewNumber <= 8
@@ -20,9 +20,9 @@ BEGIN
 			,[Code]
 	FROM	[dbo].[FieldPositions]
 	WHERE	Id = ANY 
-					(SELECT	Id
-					 FROM	dbo.FieldPositions
-					 WHERE	Id <= @CrewNumber)
+			(SELECT	Id
+			 FROM	dbo.FieldPositions
+			 WHERE	Id <= @CrewNumber)
 	IF @ReplayOfficials = 'true'
 		SELECT	[Id]
 				,[Name]

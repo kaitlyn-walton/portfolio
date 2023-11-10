@@ -1,0 +1,25 @@
+CREATE PROC [dbo].[CourseSubscription_Delete]
+				@UserId int,
+				@CourseId int
+
+AS
+/*
+	SELECT * 
+	FROM dbo.CourseSubscription
+
+	DECLARE @UserId int = 138,
+			    @CourseId int = 18
+
+	EXECUTE [dbo].[CourseSubscription_Delete]
+									@UserId, 
+									@CourseId
+
+	SELECT * 
+	FROM dbo.CourseSubscription
+*/
+BEGIN
+
+	DELETE from [dbo].[CourseSubscription]
+	WHERE UserId = @UserId AND CourseId = @CourseId
+
+END

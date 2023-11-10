@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import toastr from "toastr";
 import Swal from "sweetalert2";
@@ -15,6 +15,7 @@ import {
   Container,
   Tab,
   Nav,
+  Button,
 } from "react-bootstrap";
 import courseService from "../../services/courseService";
 import * as usersService from "../../services/userService";
@@ -30,6 +31,7 @@ import {
 import "./course.css";
 import CourseAccordion from "./CourseAccordion";
 import LoginModal from "components/user/LoginModal";
+import ratingsService from "services/ratingsService";
 
 const _logger = debug.extend("CourseDetail");
 
@@ -48,10 +50,22 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
     modifiedBy: 0,
     dateModified: "",
   });
+  const [ratingInfo, setRatingInfo] = useState({
+    ratingId: null,
+    ratingVal: null,
+    render: false,
+  });
+  const { courseId } = useParams();
 
   const [pageData, setPageData] = useState({
     lecturesArray: [],
+    userRoles: currentUser.roles,
+    admin: false,
+    subscribers: [],
+    mappedSubscribers: [],
   });
+
+  _logger(pageData.userRoles);
 
   const { state } = useLocation();
 
@@ -59,6 +73,8 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
     button: "",
     disabled: false,
   });
+
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (state !== null) {
@@ -82,14 +98,18 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
         modifiedBy: state.modifiedBy,
         dateModified: state.dateModified,
       });
+      ratingsService
+        .getIndvRating(state.lectureType.id, state.id, currentUser.id)
+        .then(onGetIndvRatingSuccess)
+        .catch(onGetIndvRatingError);
     } else {
       courseService
-        .getCourseById(courseDetail.id)
+        .getCourseById(courseId)
         .then(onGetCourseIdSuccess)
         .catch(onGetCourseIdError);
     }
     lectureService
-      .getLecturesByCourseId(state.id)
+      .getLecturesByCourseId(courseId)
       .then(onGetLectureSuccess)
       .catch(onGetLectureError);
     if (!currentUser.isLoggedIn) {
@@ -104,14 +124,73 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
         .then(onCheckSubscriptionSuccess)
         .catch(onCheckSubscriptionError);
     }
-  }, [currentUser]);
+  }, [currentUser, ratingInfo.ratingId, courseDetail.instructor]);
 
   useEffect(() => {
     courseService
-      .checkCourseSubscription(courseDetail.id)
+      .checkCourseSubscription(courseId)
       .then(onCheckCourseSubscriptionSuccess)
       .catch(onCheckCourseSubscriptionError);
+    if (courseDetail !== null) {
+      ratingsService
+        .getIndvRating(
+          courseDetail.lectureTypeId,
+          courseDetail.id,
+          currentUser.id
+        )
+        .then(onGetIndvRatingSuccess)
+        .catch(onGetIndvRatingError);
+    }
+    const adminCheck = pageData.userRoles.some((ur) => ur === "Admin");
+    _logger(adminCheck);
+    if (adminCheck) {
+      setPageData((prevState) => {
+        const pd = { ...prevState };
+        pd.admin = true;
+        return pd;
+      });
+      courseService
+        .getCourseSubscribers(courseDetail.id)
+        .then(onGetSubscriberSuccess)
+        .catch(onGetSubscriberError);
+    }
   }, [courseDetail]);
+
+  const onGetIndvRatingSuccess = (response) => {
+    _logger("Get individual rating success: ", response);
+    setRatingInfo((prevState) => {
+      const pd = { ...prevState };
+      pd.ratingId = response.item.id;
+      pd.ratingVal = response.item.ratingVal;
+      pd.render = true;
+      return pd;
+    });
+  };
+
+  const onGetIndvRatingError = (error) => {
+    _logger(error);
+    setRatingInfo((prevState) => {
+      const pd = { ...prevState };
+      pd.render = true;
+      return pd;
+    });
+  };
+
+  const onGetSubscriberSuccess = (response) => {
+    _logger(response.items);
+    let users = response.items;
+
+    setPageData((prevState) => {
+      const pd = { ...prevState };
+      pd.subscribers = users;
+      pd.mappedSubscribers = users.map(mapSubscribers);
+      return pd;
+    });
+  };
+
+  const onGetSubscriberError = (error) => {
+    _logger(error);
+  };
 
   const onGetLectureSuccess = (response) => {
     _logger("lecture data for cards", response.items);
@@ -123,11 +202,34 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
     });
   };
 
+  const mapSubscribers = (sub) => {
+    _logger(sub);
+    return (
+      <Container>
+        <Tab.Pane eventKey="users">
+          <ul className="list-group">
+            <Row>
+              <li className="list-group-item">
+                <Image
+                  src={sub.avatarUrl}
+                  className="rounded-circle avatar"
+                  alt=""
+                />{" "}
+                {sub.firstName} {sub.mi} {sub.lastName} {""}
+              </li>
+            </Row>
+          </ul>
+        </Tab.Pane>
+      </Container>
+    );
+  };
+
   const onGetLectureError = (err) => {
     _logger(err);
   };
 
   const onGetCourseIdSuccess = (response) => {
+    _logger("Course detail: ", response);
     const courseDetailFromAjax = response.item;
     setCourseDetail({
       id: courseDetailFromAjax.id,
@@ -135,12 +237,13 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
       subject: courseDetailFromAjax.subject,
       description: courseDetailFromAjax.description,
       duration: courseDetailFromAjax.duration,
-      instructorId: courseDetailFromAjax.instructorId,
-      instructorFirstName: courseDetailFromAjax.instructorFirstName,
-      instructorLastName: courseDetailFromAjax.instructorLastName,
-      instructorAvatarUrl: courseDetailFromAjax.instructorAvatarUrl,
+      instructorId: courseDetailFromAjax.instructor.id,
+      instructorFirstName: courseDetailFromAjax.instructor.firstName,
+      instructorLastName: courseDetailFromAjax.instructor.lastName,
+      instructorAvatarUrl: courseDetailFromAjax.instructor.avatarUrl,
       lectureTypeId: courseDetailFromAjax.lectureType.id,
       lectureTypeName: courseDetailFromAjax.lectureType.name,
+      coverImageUrl: courseDetailFromAjax.coverImageUrl,
       statusId: courseDetailFromAjax.statusName.id,
       statusName: courseDetailFromAjax.statusName.name,
       createdBy: courseDetailFromAjax.createdBy,
@@ -165,13 +268,62 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
     }
     if (buttonStatus.button === "Access Course") {
       courseService
-        .addCourseSubscription(courseDetail.id)
+        .addCourseSubscription(courseId)
         .then(onAddCourseSubscriptionSuccess)
         .catch(onCheckSubscriptionError);
     }
     if (buttonStatus.button === "Subscribe to MoneFi") {
       navigate(`/subscriptions`);
     }
+  };
+
+  const onClickUnsubscribe = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: "Are you sure you want to unsubscribe?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "Cancel",
+      icon: "warning",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        courseService
+          .removeCourse(currentUser.id, courseDetail.id)
+          .then(onUnsubscribeSuccess)
+          .catch(onUnsubscribeError);
+      } else {
+        Swal.fire("Cancelled", "", "error");
+      }
+    });
+  };
+
+  const onUnsubscribeSuccess = () => {
+    _logger(
+      `${currentUser.firstName} is unsubscribed from ${courseDetail.title}`
+    );
+    Swal.fire({
+      text: `You have successfully unsubscribed from the ${courseDetail.title} course.`,
+      icon: "success",
+      confirmButtonText: "Close",
+    }).then(closeModal());
+    setShow(false);
+    setButtonStatus((prevState) => {
+      const bs = { ...prevState };
+      bs.button = "Access Course";
+      bs.disabled = false;
+      return bs;
+    });
+    if (pageData.admin) {
+      courseService
+        .getCourseSubscribers(courseDetail.id)
+        .then(onGetSubscriberSuccess)
+        .catch(onGetSubscriberError);
+    }
+  };
+
+  const onUnsubscribeError = (error) => {
+    _logger(error);
   };
 
   const onAddCourseSubscriptionSuccess = () => {
@@ -182,6 +334,19 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
       bs.disabled = true;
       return bs;
     });
+    Swal.fire({
+      title: `Congrats!`,
+      text: `You are now enrolled in the ${courseDetail.title} course`,
+      icon: "success",
+      confirmButtonText: "Close",
+    }).then(closeModal());
+    setShow(true);
+    if (pageData.admin) {
+      courseService
+        .getCourseSubscribers(courseDetail.id)
+        .then(onGetSubscriberSuccess)
+        .catch(onGetSubscriberError);
+    }
   };
 
   const onCheckSubscriptionSuccess = (data) => {
@@ -193,11 +358,10 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
         return bs;
       });
     } else {
-      setButtonStatus((prevState) => {
-        const bs = { ...prevState };
-        bs.button = "Access Course";
-        return bs;
-      });
+      courseService
+        .checkCourseSubscription(courseId)
+        .then(onCheckCourseSubscriptionSuccess)
+        .catch(onCheckCourseSubscriptionError);
     }
   };
 
@@ -214,6 +378,15 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
         bs.disabled = true;
         return bs;
       });
+      setShow(true);
+    } else {
+      setButtonStatus((prevState) => {
+        const bs = { ...prevState };
+        bs.button = "Access Course";
+        bs.disabled = false;
+        return bs;
+      });
+      setShow(false);
     }
   };
 
@@ -269,6 +442,7 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
     currentUser.isLoggedIn = true;
     loginSuccess(currentUser);
   };
+  _logger(CourseAccordion, "Accordion");
 
   return (
     <Fragment>
@@ -318,6 +492,11 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
                             </Nav.Link>
                           </Nav.Item>
                         ))}
+                        {pageData.admin && (
+                          <Nav.Item key={courseDetail.id}>
+                            <Nav.Link eventKey="users">{"Admin"}</Nav.Link>
+                          </Nav.Item>
+                        )}
                       </Nav>
                       <Card.Body className="p-0">
                         <Tab.Content>
@@ -332,6 +511,9 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
                           <Tab.Pane eventKey="description" className="pb-4 p-4">
                             {courseDetail.description}
                           </Tab.Pane>
+                          {pageData.admin && (
+                            <div>{pageData.mappedSubscribers}</div>
+                          )}
                         </Tab.Content>
                       </Card.Body>
                     </Card>
@@ -340,24 +522,41 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
                 <Col lg={4} md={12} sm={12} className="mt-lg-n22">
                   <Card className="mt-2 mb-4 card-hover courseCardDetailBody">
                     <Row className="g-0">
-                      <span className="courseDetailBodyBadge">
-                        {courseDetail.subject}
-                      </span>
+                      <div className="row justify-content-end">
+                        <span className="courseDetailBodyBadge">
+                          {courseDetail.subject}
+                        </span>
+                      </div>
+
                       <img
                         src={courseDetail.coverImageUrl}
                         alt="..."
                         className="bg-cover img-left-rounded courseDetailCourseImage"
                       />
-                      <div className="mt-1 mb-1 d-flex justify-content-center">
-                        <LoginModal
-                          openModal={isOpen}
-                          getCloseHandler={closeModal}
-                          clickAccess={onClickAccess}
-                          buttonStatus={buttonStatus}
-                          setShow={openModal}
-                          onLoginClicked={onLoginClicked}
-                        />
-                      </div>
+
+                      <Row className="pt-3 justify-content-center">
+                        <div className="col-auto">
+                          <LoginModal
+                            isOpen={isOpen}
+                            getCloseHandler={closeModal}
+                            clickAccess={onClickAccess}
+                            buttonStatus={buttonStatus}
+                            setShow={openModal}
+                            onLoginClicked={onLoginClicked}
+                          />
+                        </div>
+                        {show && (
+                          <div className="col-auto">
+                            <Button
+                              className="btn btn-success"
+                              onClick={onClickUnsubscribe}
+                            >
+                              Unsubscribe
+                            </Button>
+                          </div>
+                        )}
+                      </Row>
+
                       <Col lg={12} md={12} sm={12}>
                         <Card.Body className="courseCardDetail">
                           <p className="mb-2 text-truncate-line-2 ">
@@ -429,10 +628,15 @@ const CourseInfo = ({ currentUser, loginSuccess }) => {
                             <Col></Col>
                           </Row>
                           <div className="ratings-container">
-                            <Ratings
-                              entityId={state.id}
-                              entityTypeId={state.lectureType.id}
-                            />
+                            {ratingInfo.render && (
+                              <Ratings
+                                setRatingInfo={setRatingInfo}
+                                ratingId={ratingInfo.ratingId}
+                                ratingVal={ratingInfo.ratingVal}
+                                entityId={+courseId}
+                                entityTypeId={courseDetail.lectureTypeId}
+                              />
+                            )}
                             <p>Click to Submit Rating</p>
                           </div>
                         </Card.Body>

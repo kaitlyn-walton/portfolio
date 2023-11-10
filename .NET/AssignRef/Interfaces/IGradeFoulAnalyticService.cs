@@ -1,9 +1,3 @@
-﻿using Sabio.Models.Domain;
-using Sabio.Models.Domain.Seasons;
-using System.Collections.Generic;
-
-namespace Sabio.Services.Interfaces
-{
     public interface IGradeFoulAnalyticService
     {
         List<FoulsByUser> GetFoulsByUser(int seasonId, int userId, int conferenceId);
@@ -13,4 +7,3 @@ namespace Sabio.Services.Interfaces
         List<TeamFoulCount> GetTeamFouls(int gameId);
         List<BaseUser> GetAllUsers(int conferenceId);
     }
-}

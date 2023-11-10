@@ -137,4 +137,3 @@ from dbo.Games g
 			g.ConferenceId = @ConferenceId
 
 End
-GO

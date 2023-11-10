@@ -1,19 +1,3 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Sabio.Models.Domain;
-using Sabio.Models.Domain.Grades;
-using Sabio.Models.Domain.Seasons;
-using Sabio.Services;
-using Sabio.Services.Interfaces;
-using Sabio.Web.Controllers;
-using Sabio.Web.Models.Responses;
-using System;
-using System.Collections.Generic;
-
-namespace Sabio.Web.Api.Controllers
-{
     [Route("api/analytics")]
     [ApiController]
     public class GradeFoulAnalyticApiController : BaseApiController
@@ -199,4 +183,3 @@ namespace Sabio.Web.Api.Controllers
             return StatusCode(code, response);
         }
     }
-}

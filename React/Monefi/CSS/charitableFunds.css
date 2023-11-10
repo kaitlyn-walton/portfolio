@@ -1,0 +1,34 @@
+.charitable-titleCard {
+    font-weight: 500;
+    font-size: large;
+    color: #05c47e;
+}
+
+.charitable-add-Button {
+    float:right;
+    justify-content: flex-end;
+    margin-bottom: 3vh;
+    margin-left: 5px;
+}
+
+.charitable_header {
+    font-weight: bold;
+    font-size:xx-large;
+}
+
+.charitable-edit-Button {
+    float: right;
+}
+
+.charitable-button-form {
+    margin-top: 2%;
+}
+
+.charitable-back-button {
+    margin-left: 5%;
+    margin-top: 2%;
+}
+
+.charitableFormikErrors {
+    color: red;
+}

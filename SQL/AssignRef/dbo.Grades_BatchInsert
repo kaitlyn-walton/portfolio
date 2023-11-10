@@ -1,7 +1,7 @@
 
 CREATE proc [dbo].[Grades_BatchInsert]
-					@BatchInsertGrades dbo.BatchInsertGrades READONLY
-					,@CreatedBy int
+				@BatchInsertGrades dbo.BatchInsertGrades READONLY
+				,@CreatedBy int
 
 as
 /*	
@@ -12,29 +12,29 @@ as
 	values (), ()
 
 	execute dbo.Grades_BatchInsert 
-						@BatchInsertGrades
-						,@CreatedBy
+				@BatchInsertGrades
+				,@CreatedBy
 
 */
 BEGIN
 
 	Declare @newIds table ( [Id] int )
 
-	INSERT INTO [dbo].[Grades]
-           ([FoulId]
-           ,[GradeTypeId]
-           ,[Comment]
-           ,[CreatedBy]
-           ,[ModifiedBy])
+	INSERT INTO [dbo].[Grades] ([FoulId]
+			           ,[GradeTypeId]
+			           ,[Comment]
+			           ,[CreatedBy]
+			           ,[ModifiedBy])
+		           
 	
 	Output inserted.[Id] 
 	Into @newIds
 
 	Select b.[FoulId]
-			,b.[GradeTypeId]
-			,b.[Comment]
-			,@CreatedBy
-			,@CreatedBy
+		,b.[GradeTypeId]
+		,b.[Comment]
+		,@CreatedBy
+		,@CreatedBy
 	From @BatchInsertGrades as b
 
 	Select n.[Id]
